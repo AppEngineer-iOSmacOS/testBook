@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Reader Wiew Controller-->
+        <!--Reader View Controller-->
         <scene sceneID="qVj-YC-1Ju">
             <objects>
-                <viewController id="Ujo-B6-OI2" customClass="ReaderWiewController" customModule="testIOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Ujo-B6-OI2" customClass="ReaderViewController" customModule="testIOS" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="sfM-rh-Og2"/>
                         <viewControllerLayoutGuide type="bottom" id="8Jc-Fl-vQT"/>
@@ -35,7 +35,7 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="M9P-5a-Q1J">
                                                     <rect key="frame" x="0.0" y="0.0" width="375" height="115"/>
-                                                    <color key="backgroundColor" red="1" green="0.85885959199999995" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="List title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9mH-iE-cyh">
                                                     <rect key="frame" x="137.5" y="45" width="101.5" height="26"/>

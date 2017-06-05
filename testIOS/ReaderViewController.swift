@@ -18,14 +18,13 @@
 
 import UIKit
 
-class ReaderWiewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ReaderViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    let urlApi = "http://api.storytelbridge.com/consumables/list/1?page="
     var numPage = 1
     var indicatorFooter:UIActivityIndicatorView?
     let reachability = Reachability()!
-    var titleCell: ModelTitleCell = ModelTitleCell()
-    var xxxCell: [ModelCell] = []
+    var titleModelCell: ModelTitleCell = ModelTitleCell()
+    var listModelCell: [ModelCell] = []
     
     @IBOutlet weak var tableview: UITableView!
     
@@ -39,7 +38,7 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
         reachability.whenReachable = { reachability in
             DispatchQueue.main.async {
                 if reachability.isReachable {
-                    print("Reachable via WiFi")
+                    print(reachability.currentReachabilityStatus)
                     self.getModelData()
                 }
             }
@@ -73,19 +72,19 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
         // Dispose of any resources that can be recreated.
     }
     
-    func refreshTableVeiwList(){
-        if reachability.isReachable {
-            indicatorFooter?.startAnimating()
-            numPage += 1
-            getModelData()
+    func refreshTableVeiwList() {
+        guard reachability.isReachable else {
+            return
         }
+        indicatorFooter?.startAnimating()
+        getModelData()
     }
     
     
     
     func getModelData() {
         
-        let urlRequest = URLRequest(url: URL(string: urlApi + "\(numPage)")!)
+        let urlRequest = URLRequest(url: URL(string: APIConstants.sharedInstance.urlApi + "\(numPage)")!)
         let task = URLSession.shared.dataTask(with: urlRequest) { (data,response,error) in
             
             if error != nil {
@@ -94,13 +93,13 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
             }
             do {
                 let json = try! JSON(data: data!)
-                
+                self.numPage += 1
                 for (keyJson, valueJson) in json {
                     
                     switch (keyJson) {
                     case "metadata" :
-                        self.titleCell.title = valueJson["title"].stringValue
-                        self.titleCell.imageUrl = valueJson["cover"]["url"].stringValue
+                        self.titleModelCell.title = valueJson["title"].stringValue
+                        self.titleModelCell.imageUrl = valueJson["cover"]["url"].stringValue
                         
                     case "consumables":
                         let tableCellData = valueJson
@@ -128,7 +127,7 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
                                         let narrator = narrators["name"].stringValue
                                         modelCell.narrator?.append(narrator)
                                     }
-                                    self.xxxCell.append(modelCell)
+                                    self.listModelCell.append(modelCell)
                                     
                                 default:
                                     break
@@ -161,21 +160,21 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: withIdentifier, for: indexPath)
         
         if let firstCell = cell as? ListTitleTableViewCell {
-            firstCell.imageTitleView.downloadImage(from: (titleCell.imageUrl)!)
-            firstCell.listTitle.text = titleCell.title
+            firstCell.imageTitleView.downloadImage(from: titleModelCell.imageUrl != nil ? (titleModelCell.imageUrl)! : "NoImage")
+            firstCell.listTitle.text = titleModelCell.title != nil ? titleModelCell.title : "No data, please refresh"
             
         }
         
         if let nextCell = cell as? ListBooksTableViewCell {
             
-            nextCell.titleBookLabel.text = xxxCell[indexPath.row - 1].title
-            nextCell.imageBookView.downloadImage(from: xxxCell[indexPath.row - 1].imageUrl!)
+            nextCell.titleBookLabel.text = listModelCell[indexPath.row - 1].title != nil ? listModelCell[indexPath.row - 1].title : "No data, please refresh"
+            nextCell.imageBookView.downloadImage(from: listModelCell[indexPath.row - 1].imageUrl != nil ? listModelCell[indexPath.row - 1].imageUrl! : "NoImage")
             
-            if xxxCell[indexPath.row - 1].author?.count != nil {
-                nextCell.textAutorBookLabel.text = "by: " + (xxxCell[indexPath.row - 1].author?.joined(separator: ", "))!
+            if listModelCell[indexPath.row - 1].author?.count != nil {
+                nextCell.textAutorBookLabel.text = "by: " + (listModelCell[indexPath.row - 1].author?.joined(separator: ", "))!
             }
-            if xxxCell[indexPath.row - 1].narrator?.count != nil {
-                nextCell.textNarratorBookLabel.text = "With: " + (xxxCell[indexPath.row - 1].narrator?.joined(separator: ", "))!
+            if listModelCell[indexPath.row - 1].narrator?.count != nil {
+                nextCell.textNarratorBookLabel.text = "With: " + (listModelCell[indexPath.row - 1].narrator?.joined(separator: ", "))!
             }
         }
         return cell
@@ -187,7 +186,7 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  self.xxxCell.count > 0 ? self.xxxCell.count + 1 : 0
+        return  self.listModelCell.count > 0 ? self.listModelCell.count + 1 : 1
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
