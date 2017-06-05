@@ -188,13 +188,12 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+    // + 1 -> Because we have a Title Cell in first cell
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  self.listCellModel.count > 0 ? self.listCellModel.count + 1 : 1
+        return  self.listCellModel.count + 1
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
         return  indexPath.row == 0 ? 200.0 : 100.0  //Choose your custom row height
     }
     
