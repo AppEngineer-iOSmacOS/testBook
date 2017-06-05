@@ -8,13 +8,13 @@
 
 import UIKit
 
-class ModelTitleCell: NSObject {
+class TitleCellModel: NSObject {
     
     var title: String?
     var imageUrl: String?
 }
 
-class ModelCell: NSObject {
+class CellModel: NSObject {
     
     var title: String?
     var author: [String]?

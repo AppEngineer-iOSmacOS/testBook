@@ -23,8 +23,8 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     var numPage = 1
     var indicatorFooter:UIActivityIndicatorView?
     let reachability = Reachability()!
-    var titleModelCell: ModelTitleCell = ModelTitleCell()
-    var listModelCell: [ModelCell] = []
+    var titleCellModel: TitleCellModel?
+    var listCellModel: [CellModel] = []
     
     @IBOutlet weak var tableview: UITableView!
     
@@ -98,8 +98,9 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     switch (keyJson) {
                     case "metadata" :
-                        self.titleModelCell.title = valueJson["title"].stringValue
-                        self.titleModelCell.imageUrl = valueJson["cover"]["url"].stringValue
+                        self.titleCellModel = TitleCellModel()
+                        self.titleCellModel?.title = valueJson["title"].stringValue
+                        self.titleCellModel?.imageUrl = valueJson["cover"]["url"].stringValue
                         
                     case "consumables":
                         let tableCellData = valueJson
@@ -108,7 +109,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
                             let finalTableCellData = valueNewJson
                             for (keyFinalJson , valueFinalJson) in finalTableCellData {
                                 
-                                let modelCell = ModelCell()
+                                let modelCell = CellModel()
                                 
                                 switch (keyFinalJson) {
                                 case "metadata" :
@@ -127,7 +128,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
                                         let narrator = narrators["name"].stringValue
                                         modelCell.narrator?.append(narrator)
                                     }
-                                    self.listModelCell.append(modelCell)
+                                    self.listCellModel.append(modelCell)
                                     
                                 default:
                                     break
@@ -160,21 +161,24 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: withIdentifier, for: indexPath)
         
         if let firstCell = cell as? ListTitleTableViewCell {
-            firstCell.imageTitleView.downloadImage(from: titleModelCell.imageUrl != nil ? (titleModelCell.imageUrl)! : "NoImage")
-            firstCell.listTitle.text = titleModelCell.title != nil ? titleModelCell.title : "No data, please refresh"
+            
+            if (titleCellModel?.imageUrl) != nil {
+                firstCell.imageTitleView.downloadImage(from: (titleCellModel?.imageUrl)!)
+            }
+            firstCell.listTitle.text = titleCellModel?.title ?? "No data, please refresh"
             
         }
         
         if let nextCell = cell as? ListBooksTableViewCell {
             
-            nextCell.titleBookLabel.text = listModelCell[indexPath.row - 1].title != nil ? listModelCell[indexPath.row - 1].title : "No data, please refresh"
-            nextCell.imageBookView.downloadImage(from: listModelCell[indexPath.row - 1].imageUrl != nil ? listModelCell[indexPath.row - 1].imageUrl! : "NoImage")
+            nextCell.titleBookLabel.text = listCellModel[indexPath.row - 1].title ?? "No data, please refresh"
+            nextCell.imageBookView.downloadImage(from: listCellModel[indexPath.row - 1].imageUrl ?? "NoImage")
             
-            if listModelCell[indexPath.row - 1].author?.count != nil {
-                nextCell.textAutorBookLabel.text = "by: " + (listModelCell[indexPath.row - 1].author?.joined(separator: ", "))!
+            if listCellModel[indexPath.row - 1].author?.count != nil {
+                nextCell.textAutorBookLabel.text = "by: " + (listCellModel[indexPath.row - 1].author?.joined(separator: ", "))!
             }
-            if listModelCell[indexPath.row - 1].narrator?.count != nil {
-                nextCell.textNarratorBookLabel.text = "With: " + (listModelCell[indexPath.row - 1].narrator?.joined(separator: ", "))!
+            if listCellModel[indexPath.row - 1].narrator?.count != nil {
+                nextCell.textNarratorBookLabel.text = "With: " + (listCellModel[indexPath.row - 1].narrator?.joined(separator: ", "))!
             }
         }
         return cell
@@ -186,7 +190,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  self.listModelCell.count > 0 ? self.listModelCell.count + 1 : 1
+        return  self.listCellModel.count > 0 ? self.listCellModel.count + 1 : 1
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
