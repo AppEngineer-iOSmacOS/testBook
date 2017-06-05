@@ -20,7 +20,7 @@ import UIKit
 
 class ReaderViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var numPage = 1
+    var numPage = 1 // We will have some download pages
     var indicatorFooter:UIActivityIndicatorView?
     let reachability = Reachability()!
     var titleCellModel: TitleCellModel?
@@ -73,6 +73,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func refreshTableVeiwList() {
+        //If there is no internet, then do nothing
         guard reachability.isReachable else {
             return
         }
@@ -81,7 +82,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     
-    
+    // Theoretically it should be carried out in the model
     func getModelData() {
         
         let urlRequest = URLRequest(url: URL(string: APIConstants.sharedInstance.urlApi + "\(numPage)")!)
@@ -157,7 +158,6 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let withIdentifier =  indexPath.row > 0 ? "ListBooksCell" : "ListTitleCell"
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: withIdentifier, for: indexPath)
         
         if let firstCell = cell as? ListTitleTableViewCell {
