@@ -175,7 +175,7 @@ class ReaderViewController: UIViewController, UITableViewDataSource, UITableView
             nextCell.imageBookView.downloadImage(from: listCellModel[indexPath.row - 1].imageUrl ?? "NoImage")
             
             if listCellModel[indexPath.row - 1].author?.count != nil {
-                nextCell.textAutorBookLabel.text = "by: " + (listCellModel[indexPath.row - 1].author?.joined(separator: ", "))!
+                nextCell.textAutorBookLabel.text = "By: " + (listCellModel[indexPath.row - 1].author?.joined(separator: ", "))!
             }
             if listCellModel[indexPath.row - 1].narrator?.count != nil {
                 nextCell.textNarratorBookLabel.text = "With: " + (listCellModel[indexPath.row - 1].narrator?.joined(separator: ", "))!
