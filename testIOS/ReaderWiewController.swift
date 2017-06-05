@@ -22,7 +22,6 @@ class ReaderWiewController: UIViewController, UITableViewDataSource, UITableView
     
     let urlApi = "http://api.storytelbridge.com/consumables/list/1?page="
     var numPage = 1
-    var loadMoreStatus = false
     var indicatorFooter:UIActivityIndicatorView?
     let reachability = Reachability()!
     var titleCell: ModelTitleCell = ModelTitleCell()
